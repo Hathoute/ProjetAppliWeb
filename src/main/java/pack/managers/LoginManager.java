@@ -12,9 +12,11 @@ import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.rmi.CORBA.Util;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -32,6 +34,7 @@ public class LoginManager {
 
     @EJB
     private Facade facade;
+    private Map<String, HttpSession> sessions = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -48,7 +51,7 @@ public class LoginManager {
         return users.getObject().containsKey(username);
     }
 
-    public Utilisateur correctCredentials(String username, String password) {
+    public Utilisateur login(String username, String password, HttpSession session) {
         if(!usernameExists(username)) {
             return null;
         }
@@ -58,6 +61,24 @@ public class LoginManager {
             return null;
         }
 
+        session.setAttribute("user", username);
+        session.setMaxInactiveInterval(600);
+        sessions.put(user.getUsername(), session);
+
         return user;
     }
+
+    public Utilisateur getSessionUser(HttpSession session) {
+        String username = (String) session.getAttribute("user");
+
+        if(!sessions.containsKey(username)) {
+            return null;
+        }
+        if(!sessions.get(username).getId().equals(session.getId())) {
+            return null;
+        }
+
+        return users.getObject().get(username);
+    }
+
 }

@@ -22,8 +22,8 @@ public class Restaurant {
 	@ManyToOne
 	private TypeRestaurant type;
 	
-	@OneToMany(mappedBy="restaurant", cascade = CascadeType.ALL)
-	private Collection<Menu> menus = new ArrayList<Menu>();;
+	@OneToMany(mappedBy="restaurant", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Collection<Menu> menus;
 
 	public int getId() {
 		return id;

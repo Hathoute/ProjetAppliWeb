@@ -55,7 +55,7 @@ public class Facade {
             }
 
             Collection<Menu> menus = r.getMenus();
-            menus.add(addMenu("Menu " + i, 1 + rand.nextFloat() * 5, sublist, r));
+            menus.add(addMenu("Menu name " + i, 100 + rand.nextInt(1000), sublist, r));
             r.setMenu(menus);
         }
     }
@@ -98,7 +98,7 @@ public class Facade {
         return tr;
     }
 
-    public Menu addMenu(String name, float prix, Collection<Produit> produits, Restaurant resto) {
+    public Menu addMenu(String name, long prix, Collection<Produit> produits, Restaurant resto) {
         Menu m = new Menu();
 
         m.setName(name);
@@ -121,20 +121,8 @@ public class Facade {
         return p;
     }
 
-    public void ajout_menu(int id_m, int id_r) {
-        Menu m=em.find(Menu.class, id_m);
-        Restaurant r = em.find(Restaurant.class, id_r);
-        r.getMenus().add(m);
-    }
-
-    public void ajout_restau(int id) {
-        Restaurant R = new Restaurant();
-        R.setId(id);
-        em.persist(R);
-    }
-
-    public Collection<Menu> liste_menus(){
-        return em.createQuery("select m from Menu m", Menu.class).getResultList();
+    public Restaurant getRestaurant(int id) {
+        return em.find(Restaurant.class, id);
     }
 
     public Menu getMenu(int id) {

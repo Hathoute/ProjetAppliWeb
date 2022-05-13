@@ -16,7 +16,7 @@ public class Menu {
 	
 	private String name;
 	
-	private float prix;
+	private long prix;
 	
 	@ManyToMany
 	private Collection<Produit> produits = new ArrayList<Produit>();
@@ -45,11 +45,11 @@ public class Menu {
 		this.name = name;
 	}
 
-	public float getPrix() {
+	public long getPrix() {
 		return prix;
 	}
 
-	public void setPrix(float prix) {
+	public void setPrix(long prix) {
 		this.prix = prix;
 	}
 
@@ -60,7 +60,9 @@ public class Menu {
 	public void setProduits(Collection<Produit> produits) {
 		this.produits = produits;
 	}
-	
-	
+
+	public String getEuroPrice() {
+		return (double)prix / 100 + "€";
+	}
 
 }

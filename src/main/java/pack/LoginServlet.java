@@ -35,9 +35,10 @@ public class LoginServlet extends HttpServlet {
         }
 
         //TODO: Implement login of other types of users
-        Utilisateur user = loginManager.correctCredentials(username, password);
+        Utilisateur user = loginManager.login(username, password, request.getSession());
         if(user == null) {
-            routingManager.loadPage("accueil.html", "Identifiants incorrects - Accueil", request, response);
+            request.setAttribute("message", "Identifiants incorrects");
+            routingManager.loadPage("accueil.html", "Accueil", request, response);
             return;
         }
 

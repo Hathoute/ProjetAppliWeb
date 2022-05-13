@@ -11,7 +11,8 @@ public class Utilisateur {
 	@Id
 	@GeneratedValue
 	private int id;
-	
+
+	@Column(unique = true)
 	private String username;
 	
 	private String password;

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="pack.util.RuntimeEnvironment" %><%--
   Created by IntelliJ IDEA.
   User: Hathoute
   Date: 5/13/2022
@@ -8,6 +8,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String pageTitle = (String) request.getAttribute("pageTitle");
+    String file = (String) request.getAttribute("file");
+    String message = (String) request.getAttribute("message");
 %>
 
 <html>
@@ -15,6 +17,12 @@
     <title><%=pageTitle%></title>
 </head>
 <body>
-    <jsp:include page="${htmlFile}"></jsp:include>
+<% if(RuntimeEnvironment.isDebugging()) { %>
+    <p>Currently loaded file: <%=file%></p>
+<%}%>
+<% if(message != null) { %>
+    <p><%=message%></p>
+<%}%>
+    <jsp:include page="${file}"></jsp:include>
 </body>
 </html>

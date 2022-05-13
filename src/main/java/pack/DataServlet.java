@@ -1,6 +1,8 @@
 package pack;
 
 import pack.entities.*;
+import pack.managers.LoginManager;
+import pack.managers.RoutingManager;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -18,22 +20,36 @@ public class DataServlet extends HttpServlet {
 
     @EJB
     Facade facade;
+    @EJB
+    private RoutingManager routingManager;
+    @EJB
+    private LoginManager loginManager;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String operation = req.getParameter("op");
+
+        Utilisateur user = loginManager.getSessionUser(req.getSession());
+        if(user == null) {
+            req.setAttribute("message", "Vous devez être connecté pour continuer...");
+            routingManager.loadPage("accueil.html", "Accueil", req, resp);
+            return;
+        }
+
         switch(operation) {
             case "listRestau":
                 req.setAttribute("restaurants", facade.liste_restau());
-                req.getRequestDispatcher("liste_restau.jsp").forward(req, resp);
+                routingManager.loadPage("liste_restau.jsp", "Liste des restaurants", req, resp);
                 break;
             case "listMenues":
                 int rId = Integer.parseInt(req.getParameter("rid"));
-                Restaurant r = facade.liste_restau().stream().filter(x -> x.getId() == rId).findFirst().get();
+                Restaurant r = facade.getRestaurant(rId);
 
                 req.setAttribute("restaurant", r);
-                req.getRequestDispatcher("liste_menus.jsp").forward(req, resp);
+                routingManager.loadPage("liste_menus.jsp",
+                        "Liste des menus - " + r.getNom(),
+                        req, resp);
                 break;
             default:
                 resp.sendError(404);
