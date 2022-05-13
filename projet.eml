@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component LANGUAGE_LEVEL="JDK_1_8" jdk="JavaSE-1.8" jdk_type="JavaSDK">
+	<output-test url="file://$MODULE_DIR$/target/test-classes"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<testFolder url="file://$MODULE_DIR$/src/test/java"/>
+		<excludeFolder url="file://$MODULE_DIR$/target"/>
+	</contentEntry>
+	<levels>
+		<level name="Java EE 6-Java EE 6" value="project"/>
+		<level name="Hibernate 5.4.11-5.4.11" value="project"/>
+		<level name="Maven: javax.servlet:jstl:1.2" value="project"/>
+	</levels>
+</component>
