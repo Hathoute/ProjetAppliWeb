@@ -125,6 +125,15 @@ public class Facade {
         return em.find(Restaurant.class, id);
     }
 
+    public Collection<TypeRestaurant> getRestaurantTypes() {
+        return em.createQuery("select rt from TypeRestaurant rt", TypeRestaurant.class)
+                .getResultList();
+    }
+
+    public TypeRestaurant getRestaurantType(int id) {
+        return em.find(TypeRestaurant.class, id);
+    }
+
     public Menu getMenu(int id) {
         return em.find(Menu.class, id);
     }
@@ -135,6 +144,16 @@ public class Facade {
 
     public Collection<Utilisateur> getUsers() {
         return em.createQuery("select u from Utilisateur u", Utilisateur.class)
+                .getResultList();
+    }
+
+    public Utilisateur getUser(int id) {
+        return em.find(Utilisateur.class, id);
+    }
+
+    public Collection<Utilisateur> getUsers(TypeUtilisateur type) {
+        return em.createQuery("select u from Utilisateur u where u.type = :type", Utilisateur.class)
+                .setParameter("type", type)
                 .getResultList();
     }
 

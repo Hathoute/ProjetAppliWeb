@@ -27,7 +27,6 @@ public class LoginServlet extends HttpServlet {
 
         String username = request.getParameter("identifiant");
         String password = request.getParameter("mdp");
-        String userType = request.getParameter("userType");
 
         if(username == null || password == null) {
             routingManager.loadPage("accueil.html", "Accueil", request, response);

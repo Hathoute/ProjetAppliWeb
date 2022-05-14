@@ -1,7 +1,16 @@
 package pack;
 
+import pack.entities.TypeUtilisateur;
+import pack.entities.Utilisateur;
+import pack.managers.LoginManager;
+import pack.managers.RoutingManager;
+
 import java.io.IOException;
+import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,31 +19,30 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class Servlet
  */
-@WebServlet("/Servlet")
+@WebServlet(name = "router", loadOnStartup = 1)
 public class Servlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Servlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	@EJB
+	private RoutingManager routingManager;
+	@EJB
+	private LoginManager loginManager;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		ServletRegistration r = config.getServletContext().getServletRegistration("router");
+		for (String route : routingManager.getAllRoutes()) {
+			r.addMapping(route);
+		}
+		//r.addMapping("*.html");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Utilisateur u = loginManager.getSessionUser(request.getSession());
+		routingManager.loadPageFromRoute(request.getServletPath(),
+				u == null ? TypeUtilisateur.NONE : u.getType(),
+				request, response);
+	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

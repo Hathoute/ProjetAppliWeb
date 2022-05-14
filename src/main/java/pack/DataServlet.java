@@ -40,14 +40,14 @@ public class DataServlet extends HttpServlet {
         switch(operation) {
             case "listRestau":
                 req.setAttribute("restaurants", facade.liste_restau());
-                routingManager.loadPage("liste_restau.jsp", "Liste des restaurants", req, resp);
+                routingManager.loadPage("/WEB-INF/liste_restau.jsp", "Liste des restaurants", req, resp);
                 break;
             case "listMenues":
                 int rId = Integer.parseInt(req.getParameter("rid"));
                 Restaurant r = facade.getRestaurant(rId);
 
                 req.setAttribute("restaurant", r);
-                routingManager.loadPage("liste_menus.jsp",
+                routingManager.loadPage("/WEB-INF/liste_menus.jsp",
                         "Liste des menus - " + r.getNom(),
                         req, resp);
                 break;
