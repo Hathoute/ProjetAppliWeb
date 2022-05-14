@@ -156,6 +156,64 @@ public class Facade {
                 .setParameter("type", type)
                 .getResultList();
     }
+    
+    public TypeUser getTypeUser(int id) {
+    	return em.find(TypeUser.class, id);
+    	
+    public Collection<TypeUser> liste_typeUser(){
+    	return em.createQuery("select tu from TypeUser tu", TypeUser.class).getResultList();
+    }
+    
+    public void addTypeUser(int id) {
+    	  TypeUser tu = new TypeUser(id);
+          em.persist(tu);	
+    }
+    
+    public Panier getPanier(int id) {
+    	return em.find(Panier.class, id);
+    }
+    
+    public Collection<Panier>() liste_paniers(Utilisateur utilisateur){
+    	return em.createQuery("select p from Panier p where p.utilisateur = :utilisateur", Utilisateur.class).setParameter("utilisateur", utilisateur)
+                .getResultList(); 	
+    }
+    
+    public void addPanier(Utilisateur u, Collection<Commande> listeC) {
+    	Panier p = new Panier();
+    	p.setUtilisateur_id(u);
+    	p.setCommandes(listeC);
+    	em.persist(p);
+    }
+    
+    public Livraison getLivraison(int id) {
+    	em.find(Livraison.class, id);
+    }
+    
+    public Collection<Livraison> liste_livraisons(Utilisateur livreur){
+    	return em.createQuery("select l from Livraison l where l.livreur = : livreur", Utilisateur.class).setParameter("livreur", livreur).getResultList();
+    }
+    
+    public void addLivraison(Commande c, Utilisateur liv) {
+    	Livraison l = new Livraison();
+    	l.setCommande(c);
+    	l.setLivreur(liv);
+    }
+    
+    public Commande getCommande(int id) {
+    	em.find(Commande.class, id);
+    }
+    
+   public void addCommande(Panier p, Restaurant r, Collection<Menu> liste_m) {
+	   Commande c = new Commande();
+	   c.setPanier(p);
+	   c.setRestaurant(r);
+	   c.setMenus(liste_m);
+	   em.persist(c);
+   }
+    
+   public Collection<Restaurant> get_liste_restaus(){
+	   return em.createQuery("select r from Restaurant r", Restaurant.class).getResultList();
+	   }
 
 
 }
