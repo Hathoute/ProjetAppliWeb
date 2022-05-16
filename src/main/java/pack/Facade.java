@@ -157,25 +157,14 @@ public class Facade {
                 .getResultList();
     }
     
-    public TypeUser getTypeUser(int id) {
-    	return em.find(TypeUser.class, id);
-    	
-    public Collection<TypeUser> liste_typeUser(){
-    	return em.createQuery("select tu from TypeUser tu", TypeUser.class).getResultList();
-    }
-    
-    public void addTypeUser(int id) {
-    	  TypeUser tu = new TypeUser(id);
-          em.persist(tu);	
-    }
-    
     public Panier getPanier(int id) {
     	return em.find(Panier.class, id);
     }
     
-    public Collection<Panier>() liste_paniers(Utilisateur utilisateur){
-    	return em.createQuery("select p from Panier p where p.utilisateur = :utilisateur", Utilisateur.class).setParameter("utilisateur", utilisateur)
-                .getResultList(); 	
+    public Collection<Panier> liste_paniers(Utilisateur utilisateur){
+    	return em.createQuery("select p from Panier p where p.utilisateur = :utilisateur", Panier.class)
+                .setParameter("utilisateur", utilisateur)
+                .getResultList();
     }
     
     public void addPanier(Utilisateur u, Collection<Commande> listeC) {
@@ -186,21 +175,27 @@ public class Facade {
     }
     
     public Livraison getLivraison(int id) {
-    	em.find(Livraison.class, id);
+    	return em.find(Livraison.class, id);
     }
     
     public Collection<Livraison> liste_livraisons(Utilisateur livreur){
-    	return em.createQuery("select l from Livraison l where l.livreur = : livreur", Utilisateur.class).setParameter("livreur", livreur).getResultList();
+    	return em.createQuery("select l from Livraison l where l.livreur = : livreur", Livraison.class)
+                .setParameter("livreur", livreur)
+                .getResultList();
     }
     
-    public void addLivraison(Commande c, Utilisateur liv) {
+    public Livraison addLivraison(Commande c, Utilisateur liv) {
     	Livraison l = new Livraison();
     	l.setCommande(c);
     	l.setLivreur(liv);
+
+    	em.persist(l);
+
+    	return l;
     }
     
     public Commande getCommande(int id) {
-    	em.find(Commande.class, id);
+    	return em.find(Commande.class, id);
     }
     
    public void addCommande(Panier p, Restaurant r, Collection<Menu> liste_m) {

@@ -29,7 +29,7 @@ public class Servlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		ServletRegistration r = config.getServletContext().getServletRegistration("router");
-		for (String route : routingManager.getAllRoutes()) {
+		for (String route : routingManager.getAllRoutes().keySet()) {
 			r.addMapping(route);
 		}
 		//r.addMapping("*.html");

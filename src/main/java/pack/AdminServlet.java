@@ -43,7 +43,7 @@ public class AdminServlet extends HttpServlet {
                 routingManager.loadPage("/WEB-INF/ajout_restau.jsp", "Ajouter un restaurant", req, resp);
                 return;
             default:
-                resp.sendError(404);
+                routingManager.forwardTo404(req, resp);
         }
     }
 

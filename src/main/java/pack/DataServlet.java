@@ -22,20 +22,11 @@ public class DataServlet extends HttpServlet {
     Facade facade;
     @EJB
     private RoutingManager routingManager;
-    @EJB
-    private LoginManager loginManager;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String operation = req.getParameter("op");
-
-        Utilisateur user = loginManager.getSessionUser(req.getSession());
-        if(user == null) {
-            req.setAttribute("message", "Vous devez être connecté pour continuer...");
-            routingManager.loadPage("accueil.html", "Accueil", req, resp);
-            return;
-        }
 
         switch(operation) {
             case "listRestau":
@@ -52,7 +43,7 @@ public class DataServlet extends HttpServlet {
                         req, resp);
                 break;
             default:
-                resp.sendError(404);
+                routingManager.forwardTo404(req, resp);
         }
     }
 

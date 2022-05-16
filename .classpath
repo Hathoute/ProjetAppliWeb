@@ -12,5 +12,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Java EE 6-Java EE 6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Hibernate 5.4.11-5.4.11"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: javax.servlet:jstl:1.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/bootstrap"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jquery"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jquery-3.2.1.slim"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/popper.js"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
