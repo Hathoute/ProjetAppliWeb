@@ -28,11 +28,15 @@ public class RoutingManager {
     public void init() {
         routes = new HashMap<>();
         routes.put("/index.html",
-                new Route("/WEB-INF/accueil.html", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
+                new Route("/dataServlet?op=accueil", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
         routes.put("/index.jsp",
-                new Route("/WEB-INF/accueil.html", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
+                new Route("/dataServlet?op=accueil", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
         routes.put("/accueil",
-                new Route("/WEB-INF/accueil.html", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
+                new Route("/dataServlet?op=accueil", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
+        routes.put("/connexion",
+                new Route("/WEB-INF/connexion.html", "Connexion", null, TypeUtilisateur.NONE.getId()));
+        routes.put("/inscription",
+                new Route("/WEB-INF/enregistrement.html", "Inscription", null, TypeUtilisateur.NONE.getId()));
         routes.put("/restaurants",
                 new Route("/dataServlet?op=listRestau", "Restaurants", "Restaurants", TypeUtilisateur.ALL.getId()));
         routes.put("/pageAdmin",
@@ -51,6 +55,13 @@ public class RoutingManager {
     }
 
     public void loadPage(String page, String title, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(request.getAttribute("wrapperLoaded") != null) {
+            // We already loaded the wrapper, just return content.
+            request.getRequestDispatcher(page).include(request, response);
+            return;
+        }
+
+        request.setAttribute("wrapperLoaded", true);
         request.setAttribute("file", page);
         request.setAttribute("pageTitle", title);
         request.setAttribute("user", loginManager.getSessionUser(request.getSession()));

@@ -2,13 +2,7 @@
 <%@ page import="pack.managers.NavbarManager" %>
 <%@ page import="pack.managers.NavbarEntry" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Random" %><%--
-  Created by IntelliJ IDEA.
-  User: Hathoute
-  Date: 5/16/2022
-  Time: 1:32 AM
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.Random" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     Utilisateur user = (Utilisateur) request.getAttribute("user");
@@ -49,5 +43,15 @@
                 <%}%>
             <%}%>
         </ul>
+        <% if(user == null) { %>
+        <form action="inscription">
+            <button type="submit">Inscription</button>
+        </form>
+        <form action="connexion">
+            <button type="submit">Connexion</button>
+        </form>
+        <%} else {%>
+        <span>Salut, <b><%=user.getFullname()%></b></span>
+        <%}%>
     </div>
 </nav>

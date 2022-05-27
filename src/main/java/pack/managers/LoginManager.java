@@ -80,5 +80,4 @@ public class LoginManager {
 
         return users.getObject().get(username);
     }
-
 }

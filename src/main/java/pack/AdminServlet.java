@@ -84,7 +84,7 @@ public class AdminServlet extends HttpServlet {
                 doGet(req, resp);
                 break;
             case "ajoutMenu":
-                req.setAttribute("restaurants", facade.liste_restau());
+                req.setAttribute("restaurants", facade.getRestaurants());
                 routingManager.loadPage("/WEB-INF/liste_restau.jsp", "Liste des restaurants", req, resp);
                 break;
             default:

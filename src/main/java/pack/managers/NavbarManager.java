@@ -16,6 +16,10 @@ public class NavbarManager {
         template = new ArrayList<>();
         Map<String, NavbarEntry> entryByTitle = new HashMap<>();
         routes.forEach((k, v) -> {
+            if(v.navbarTitle == null) {
+                return;
+            }
+
             if(entryByTitle.containsKey(v.navbarTitle)) {
                 NavbarEntry entry = entryByTitle.get(v.navbarTitle);
                 entry.children.put(v.title, k);

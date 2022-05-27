@@ -1,8 +1,7 @@
 <form action="loginServlet" method="post">
 	Identifiant: <input type="text" name="identifiant"><br>
-	Mot de passe: <input type="text" name="mdp"><br>
-	<input type="hidden" name="userType" value="client">
+	Mot de passe: <input type="password" name="mdp"><br>
 	<input type="submit" value="Se connecter">
-	<input type="hidden" name="op" value="connexionUtilisateur">
+	<input type="hidden" name="op" value="connexion">
 	<a href="dataServlet?op=listRestau">Voir la liste des restaurants</a><br>
 </form>

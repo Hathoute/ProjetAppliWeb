@@ -1,7 +1,6 @@
 package pack;
 
 import pack.entities.*;
-import pack.managers.LoginManager;
 import pack.managers.RoutingManager;
 
 import javax.ejb.EJB;
@@ -11,9 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @WebServlet("/dataServlet")
 public class DataServlet extends HttpServlet {
@@ -25,12 +21,16 @@ public class DataServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         String operation = req.getParameter("op");
 
         switch(operation) {
+            case "accueil":
+                req.setAttribute("restosVedette", facade.getRestaurants());
+                req.setAttribute("menusJour", facade.getMenus());
+                routingManager.loadPage("/WEB-INF/accueil.jsp", "Accueil", req, resp);
+                break;
             case "listRestau":
-                req.setAttribute("restaurants", facade.liste_restau());
+                req.setAttribute("restaurants", facade.getRestaurants());
                 routingManager.loadPage("/WEB-INF/liste_restau.jsp", "Liste des restaurants", req, resp);
                 break;
             case "listMenues":

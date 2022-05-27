@@ -138,8 +138,8 @@ public class Facade {
         return em.find(Menu.class, id);
     }
 
-    public Collection<Restaurant> liste_restau(){
-        return em.createQuery("select m from Restaurant m", Restaurant.class).getResultList();
+    public Collection<Menu> getMenus() {
+        return em.createQuery("select m from Menu m", Menu.class).getResultList();
     }
 
     public Collection<Utilisateur> getUsers() {
@@ -206,7 +206,7 @@ public class Facade {
 	   em.persist(c);
    }
     
-   public Collection<Restaurant> get_liste_restaus(){
+   public Collection<Restaurant> getRestaurants(){
 	   return em.createQuery("select r from Restaurant r", Restaurant.class).getResultList();
 	   }
 
