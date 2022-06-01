@@ -45,6 +45,10 @@ public class RoutingManager {
                 new Route("/adminServlet?op=ajoutRestau", "Ajouter un restaurant", "Panel admin", TypeUtilisateur.ADMIN.getId()));
         routes.put("/ajoutMenu",
                 new Route("/adminServlet?op=ajoutMenu", "Ajouter un menu", "Panel admin", TypeUtilisateur.ADMIN.getId()));
+        routes.put("/panier",
+                new Route("/WEB-INF/panier.jsp", "Mon panier", "Panier", TypeUtilisateur.CLIENT.getId()));
+        routes.put("/commandesEnAttente",
+                new Route("/WEB-INF/commandes_passees.jsp", "Mes commandes", "Mes commandes", TypeUtilisateur.CLIENT.getId()));
 
         // Initialize Navbar
         NavbarManager.initializeTemplate(routes);
@@ -55,6 +59,8 @@ public class RoutingManager {
     }
 
     public void loadPage(String page, String title, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("user", loginManager.getSessionUser(request.getSession()));
+
         if(request.getAttribute("wrapperLoaded") != null) {
             // We already loaded the wrapper, just return content.
             request.getRequestDispatcher(page).include(request, response);
@@ -64,7 +70,6 @@ public class RoutingManager {
         request.setAttribute("wrapperLoaded", true);
         request.setAttribute("file", page);
         request.setAttribute("pageTitle", title);
-        request.setAttribute("user", loginManager.getSessionUser(request.getSession()));
         request.getRequestDispatcher("/WEB-INF/page_wrapper.jsp").forward(request, response);
     }
 

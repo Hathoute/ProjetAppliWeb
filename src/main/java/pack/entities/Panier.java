@@ -2,6 +2,7 @@ package pack.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -16,7 +17,7 @@ public class Panier {
 	private Utilisateur utilisateur;
 	
 	@OneToMany(mappedBy="panier", cascade = CascadeType.ALL)
-	private Collection<Commande> commandes = new ArrayList<Commande>();
+	private Collection<Commande> commandes;
 
 	public int getId() {
 		return id;
@@ -41,7 +42,22 @@ public class Panier {
 	public void setCommandes(Collection<Commande> commandes) {
 		this.commandes = commandes;
 	}
-	
-	
+
+	// region Prices
+
+	public Collection<Commande> getCommandesByEtat(CommandeEtat etat) {
+		return getCommandes().stream()
+				.filter(x -> x.getEtat() == etat)
+				.collect(Collectors.toList());
+	}
+
+	public long getTotalPrice() {
+		return getCommandesByEtat(CommandeEtat.NONE)
+				.stream()
+				.mapToLong(Commande::getTotalPrice)
+				.sum();
+	}
+
+	// endregion
 
 }

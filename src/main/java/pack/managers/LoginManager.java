@@ -1,6 +1,7 @@
 package pack.managers;
 
 import pack.Facade;
+import pack.entities.TypeUtilisateur;
 import pack.entities.Utilisateur;
 import pack.util.Base16Encoder;
 import pack.util.CachedObject;
@@ -25,12 +26,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+class UserMinimalData {
+    public int id;
+    public String username;
+    public String password;
+    public TypeUtilisateur type;
+
+    public UserMinimalData(Utilisateur u) {
+        this.id = u.getId();
+        this.username = u.getUsername();
+        this.password = u.getPassword();
+        this.type = u.getType();
+    }
+}
+
 @Singleton
 @Startup
 @DependsOn({"Facade"})
 public class LoginManager {
 
-    public CachedObject<Map<String, Utilisateur>> users;
+    public CachedObject<Map<String, UserMinimalData>> users;
 
     @EJB
     private Facade facade;
@@ -40,7 +55,7 @@ public class LoginManager {
     public void init() {
         users = new CachedObject<>(() -> facade.getUsers()
                 .parallelStream()
-                .collect(Collectors.toMap(Utilisateur::getUsername, x -> x)));
+                .collect(Collectors.toMap(Utilisateur::getUsername, UserMinimalData::new)));
     }
 
     public void invalidate() {
@@ -51,21 +66,21 @@ public class LoginManager {
         return users.getObject().containsKey(username);
     }
 
-    public Utilisateur login(String username, String password, HttpSession session) {
+    public TypeUtilisateur login(String username, String password, HttpSession session) {
         if(!usernameExists(username)) {
-            return null;
+            return TypeUtilisateur.NONE;
         }
 
-        Utilisateur user = users.getObject().get(username);
-        if(!user.getPassword().equals(MD5Hash.hash(password))) {
-            return null;
+        UserMinimalData user = users.getObject().get(username);
+        if(!user.password.equals(MD5Hash.hash(password))) {
+            return TypeUtilisateur.NONE;
         }
 
         session.setAttribute("user", username);
         session.setMaxInactiveInterval(600);
-        sessions.put(user.getUsername(), session);
+        sessions.put(user.username, session);
 
-        return user;
+        return user.type;
     }
 
     public Utilisateur getSessionUser(HttpSession session) {
@@ -78,6 +93,7 @@ public class LoginManager {
             return null;
         }
 
-        return users.getObject().get(username);
+        UserMinimalData umd = users.getObject().get(username);
+        return facade.getUser(umd.id);
     }
 }

@@ -25,6 +25,9 @@ public class Restaurant {
 	@OneToMany(mappedBy="restaurant", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Collection<Menu> menus;
 
+	@OneToOne(mappedBy = "restaurant", cascade = CascadeType.ALL)
+	private ListeAttente listeAttente;
+
 	public int getId() {
 		return id;
 	}
@@ -73,4 +76,11 @@ public class Restaurant {
 		this.menus = menu;
 	}
 
+	public ListeAttente getListeAttente() {
+		return listeAttente;
+	}
+
+	public void setListeAttente(ListeAttente listeAttente) {
+		this.listeAttente = listeAttente;
+	}
 }

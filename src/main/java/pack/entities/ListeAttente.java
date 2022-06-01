@@ -3,6 +3,7 @@ package pack.entities;
 import pack.entities.Commande;
 
 import java.util.Collection;
+import java.util.Queue;
 import javax.persistence.*;
 
 @Entity
@@ -13,7 +14,10 @@ public class ListeAttente {
 	private int id;
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	private Collection<Commande> commandes_attente;
+	private Collection<Commande> commandes;
+
+	@OneToOne
+	private Restaurant restaurant;
 
 	public int getId() {
 		return id;
@@ -23,14 +27,19 @@ public class ListeAttente {
 		this.id = id;
 	}
 
-	public Collection<Commande> getCommandes_attente() {
-		return commandes_attente;
+	public Collection<Commande> getCommandes() {
+		return commandes;
 	}
 
-	public void setCommandes_attente(Collection<Commande> commandes_attente) {
-		this.commandes_attente = commandes_attente;
+	public void setCommandes(Collection<Commande> commandes) {
+		this.commandes = commandes;
 	}
-	
-	
-	
+
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
 }

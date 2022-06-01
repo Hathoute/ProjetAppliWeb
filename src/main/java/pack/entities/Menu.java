@@ -61,8 +61,4 @@ public class Menu {
 		this.produits = produits;
 	}
 
-	public String getEuroPrice() {
-		return (double)prix / 100 + "€";
-	}
-
 }

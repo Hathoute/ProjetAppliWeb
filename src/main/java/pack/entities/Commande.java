@@ -1,7 +1,9 @@
 package pack.entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -19,7 +21,11 @@ public class Commande {
 	private Restaurant restaurant;
 	
 	@ManyToMany
-	private Collection<Menu> menus = new ArrayList<Menu>();
+	private List<Menu> menus = new ArrayList<Menu>();
+
+	private CommandeEtat etat = CommandeEtat.NONE;
+
+	private LocalDateTime lastTime;
 
 	public int getId() {
 		return id;
@@ -45,14 +51,38 @@ public class Commande {
 		this.restaurant = restaurant;
 	}
 
-	public Collection<Menu> getMenus() {
+	public List<Menu> getMenus() {
 		return menus;
 	}
 
-	public void setMenus(Collection<Menu> menus) {
+	public void setMenus(List<Menu> menus) {
 		this.menus = menus;
 	}
-	
-	
+
+	public CommandeEtat getEtat() {
+		return etat;
+	}
+
+	public void setEtat(CommandeEtat etat) {
+		this.etat = etat;
+	}
+
+	public LocalDateTime getLastTime() {
+		return lastTime;
+	}
+
+	public void setLastTime(LocalDateTime lastTime) {
+		this.lastTime = lastTime;
+	}
+
+	// region Prices
+
+	public long getTotalPrice() {
+		return getMenus().stream()
+				.mapToLong(Menu::getPrix)
+				.sum();
+	}
+
+	// endregion
 
 }

@@ -1,9 +1,8 @@
 package pack;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -13,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.rmi.CORBA.Util;
 
+import org.hibernate.Hibernate;
 import pack.entities.*;
 import pack.managers.LoginManager;
 import pack.util.MD5Hash;
@@ -27,10 +27,6 @@ public class Facade {
     @PostConstruct
     public void init() {
         // TODO: Remove
-        em.createQuery("delete from Utilisateur u").executeUpdate();
-        em.createQuery("delete from TypeRestaurant tr").executeUpdate();
-        em.createQuery("delete from Restaurant r").executeUpdate();
-
         addUser("user1", MD5Hash.hash("password"), "User 1", TypeUtilisateur.CLIENT);
         addUser("user2", MD5Hash.hash("password2"), "User 2", TypeUtilisateur.CLIENT);
         addUser("livreur1", MD5Hash.hash("password3"), "Livreur 1", TypeUtilisateur.LIVREUR);
@@ -60,12 +56,15 @@ public class Facade {
         }
     }
 
+    //region Primitive add operations
+
     public Utilisateur addUser(String username, String password, String fullname, TypeUtilisateur type) {
         Utilisateur u = new Utilisateur();
         u.setUsername(username);
         u.setPassword(password);
         u.setFullname(fullname);
         u.setType(type);
+        u.setPanier(new Panier());
 
         em.persist(u);
 
@@ -85,8 +84,19 @@ public class Facade {
         r.setMenu(new ArrayList<>());
 
         em.persist(r);
+        r.setListeAttente(addListeAttente(r));
 
         return r;
+    }
+
+    public ListeAttente addListeAttente(Restaurant r) {
+        ListeAttente l = new ListeAttente();
+        l.setCommandes(new ArrayDeque<>());
+        l.setRestaurant(r);
+
+        em.persist(l);
+
+        return l;
     }
 
     public TypeRestaurant addTypeRestaurant(String nom) {
@@ -120,6 +130,39 @@ public class Facade {
 
         return p;
     }
+
+    public void addPanier(Utilisateur u, Collection<Commande> listeC) {
+        Panier p = new Panier();
+        p.setUtilisateur_id(u);
+        p.setCommandes(listeC);
+        em.persist(p);
+    }
+
+    public Commande addCommande(Panier p, Restaurant r, List<Menu> liste_m) {
+        Commande c = new Commande();
+        c.setPanier(p);
+        c.setRestaurant(r);
+        c.setMenus(liste_m);
+        c.setEtat(CommandeEtat.NONE);
+        em.persist(c);
+
+        return c;
+    }
+
+    public Livraison addLivraison(Commande c, Utilisateur liv) {
+        Livraison l = new Livraison();
+        l.setCommande(c);
+        l.setLivreur(liv);
+
+        em.persist(l);
+
+        return l;
+    }
+
+    //endregion
+
+
+    //region Primitive get operations
 
     public Restaurant getRestaurant(int id) {
         return em.find(Restaurant.class, id);
@@ -156,59 +199,100 @@ public class Facade {
                 .setParameter("type", type)
                 .getResultList();
     }
-    
+
     public Panier getPanier(int id) {
-    	return em.find(Panier.class, id);
+        return em.find(Panier.class, id);
     }
-    
+
     public Collection<Panier> liste_paniers(Utilisateur utilisateur){
-    	return em.createQuery("select p from Panier p where p.utilisateur = :utilisateur", Panier.class)
+        return em.createQuery("select p from Panier p where p.utilisateur = :utilisateur", Panier.class)
                 .setParameter("utilisateur", utilisateur)
                 .getResultList();
     }
-    
-    public void addPanier(Utilisateur u, Collection<Commande> listeC) {
-    	Panier p = new Panier();
-    	p.setUtilisateur_id(u);
-    	p.setCommandes(listeC);
-    	em.persist(p);
-    }
-    
+
     public Livraison getLivraison(int id) {
-    	return em.find(Livraison.class, id);
+        return em.find(Livraison.class, id);
     }
-    
-    public Collection<Livraison> liste_livraisons(Utilisateur livreur){
-    	return em.createQuery("select l from Livraison l where l.livreur = : livreur", Livraison.class)
-                .setParameter("livreur", livreur)
-                .getResultList();
-    }
-    
-    public Livraison addLivraison(Commande c, Utilisateur liv) {
-    	Livraison l = new Livraison();
-    	l.setCommande(c);
-    	l.setLivreur(liv);
 
-    	em.persist(l);
-
-    	return l;
-    }
-    
     public Commande getCommande(int id) {
-    	return em.find(Commande.class, id);
+        return em.find(Commande.class, id);
     }
-    
-   public void addCommande(Panier p, Restaurant r, Collection<Menu> liste_m) {
-	   Commande c = new Commande();
-	   c.setPanier(p);
-	   c.setRestaurant(r);
-	   c.setMenus(liste_m);
-	   em.persist(c);
-   }
-    
-   public Collection<Restaurant> getRestaurants(){
-	   return em.createQuery("select r from Restaurant r", Restaurant.class).getResultList();
-	   }
 
+    public Collection<Restaurant> getRestaurants(){
+        return em.createQuery("select r from Restaurant r", Restaurant.class).getResultList();
+    }
+
+    //endregion
+
+    //region User operations
+
+    public Panier getUserPanier(Utilisateur u) {
+        Panier p = getPanier(u.getPanier().getId());
+        p.getCommandes().parallelStream().forEach(x -> Hibernate.initialize(x.getMenus()));
+        return p;
+    }
+
+    public void addMenuToPanier(Utilisateur u, Menu m) {
+        Panier p = getUserPanier(u);
+        Commande c = p.getCommandes()
+                .stream()
+                .filter(x -> x.getEtat() == CommandeEtat.NONE && x.getRestaurant().getId() == m.getRestaurant().getId())
+                .findFirst()
+                .orElseGet(() -> addCommande(p, m.getRestaurant(), new ArrayList<>()));
+
+        c.getMenus().add(m);
+        c.setMenus(c.getMenus());
+    }
+
+    public void removeCommandeFromPanier(Utilisateur u, int commandeId) {
+        Panier p = getUserPanier(u);
+        Commande c = p.getCommandes()
+                .stream()
+                .filter(x -> x.getEtat() == CommandeEtat.NONE && x.getId() == commandeId)
+                .findFirst()
+                .orElse(null);
+
+        if(c != null) {
+            em.remove(c);
+            p.getCommandes().remove(c);
+        }
+    }
+
+    public void removeMenuFromPanier(Utilisateur u, int commandeId, int menuId) {
+        Panier p = getUserPanier(u);
+        Commande c = p.getCommandes()
+                .stream()
+                .filter(x -> x.getEtat() == CommandeEtat.NONE && x.getId() == commandeId)
+                .findFirst()
+                .orElse(null);
+
+        Menu m = getMenu(menuId);
+
+        if (c != null && m != null) {
+            c.getMenus().remove(m);
+            c.setMenus(c.getMenus());
+
+            if(c.getMenus().size() == 0) {
+                removeCommandeFromPanier(u, commandeId);
+            }
+        }
+    }
+
+    public void validerPanier(Utilisateur u) {
+        Panier p = getUserPanier(u);
+        for (Commande c : p.getCommandes()) {
+            if(c.getEtat() != CommandeEtat.NONE) {
+                continue;
+            }
+
+            c.setEtat(CommandeEtat.EN_ATTENTE);
+            c.setLastTime(LocalDateTime.now());
+            ListeAttente l = c.getRestaurant().getListeAttente();
+            l.getCommandes().add(c);
+            l.setCommandes(l.getCommandes());
+        }
+    }
+
+    //endregion
 
 }
