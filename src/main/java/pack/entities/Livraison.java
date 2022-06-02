@@ -11,10 +11,10 @@ public class Livraison {
 	@GeneratedValue
 	private int id;
 	
-	@OneToOne(mappedBy="livraison")
+	@ManyToOne
 	private Utilisateur livreur;
 	
-	@OneToOne(cascade = CascadeType.REMOVE)
+	@OneToOne
 	private Commande commande;
 
 	public int getId() {

@@ -83,6 +83,16 @@ public class LoginManager {
         return user.type;
     }
 
+    public void logout(HttpSession session) {
+        Utilisateur user = getSessionUser(session);
+        if(user == null) {
+            return;
+        }
+
+        session.removeAttribute("user");
+        sessions.remove(user.getUsername());
+    }
+
     public Utilisateur getSessionUser(HttpSession session) {
         String username = (String) session.getAttribute("user");
 

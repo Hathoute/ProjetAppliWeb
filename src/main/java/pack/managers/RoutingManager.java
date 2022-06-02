@@ -36,6 +36,8 @@ public class RoutingManager {
                 new Route("/dataServlet?op=accueil", "Accueil", "Accueil", TypeUtilisateur.ALL.getId()));
         routes.put("/connexion",
                 new Route("/WEB-INF/connexion.html", "Connexion", null, TypeUtilisateur.NONE.getId()));
+        routes.put("/deconnexion",
+                new Route("/loginServlet?op=deconnexion", "Deconnexion", null, TypeUtilisateur.ONLINE.getId()));
         routes.put("/inscription",
                 new Route("/WEB-INF/enregistrement.html", "Inscription", null, TypeUtilisateur.NONE.getId()));
         routes.put("/restaurants",
@@ -50,6 +52,10 @@ public class RoutingManager {
                 new Route("/managerServlet?op=listeRestau", "Mes restaurants", "Manager", TypeUtilisateur.MANAGER.getId()));
         routes.put("/manageAjoutRestau",
                 new Route("/managerServlet?op=ajoutRestau", "Ajouter un restaurant", "Manager", TypeUtilisateur.MANAGER.getId()));
+        routes.put("/livreurEnAttente",
+                new Route("/livreurServlet?op=enAttente", "Commandes en attente", "Livreur", TypeUtilisateur.LIVREUR.getId()));
+        routes.put("/livreurLivraisons",
+                new Route("/livreurServlet?op=livraisons", "Livraisons en cours", "Livreur", TypeUtilisateur.LIVREUR.getId()));
 
         // Initialize Navbar
         NavbarManager.initializeTemplate(routes);

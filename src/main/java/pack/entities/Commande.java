@@ -20,7 +20,7 @@ public class Commande {
 	@ManyToOne
 	private Restaurant restaurant;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Menu> menus = new ArrayList<Menu>();
 
 	private CommandeEtat etat = CommandeEtat.NONE;

@@ -1,0 +1,11 @@
+
+<h2>Redirection vers le menu principal dans 2 secondes...</h2>
+
+<form action="index.html" name="redirect" id="redirect" method="get">
+</form>
+
+<script>
+	window.onload = function(){
+		window.setTimeout(function() { document.redirect.submit(); }, 2000);
+	};
+</script>

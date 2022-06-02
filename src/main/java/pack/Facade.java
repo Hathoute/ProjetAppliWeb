@@ -27,7 +27,7 @@ public class Facade {
     @PostConstruct
     public void init() {
         // TODO: Remove
-        addUser("user1", MD5Hash.hash("password"), "User 1", TypeUtilisateur.CLIENT);
+        Utilisateur user = addUser("user1", MD5Hash.hash("password"), "User 1", TypeUtilisateur.CLIENT);
         addUser("user2", MD5Hash.hash("password2"), "User 2", TypeUtilisateur.CLIENT);
         addUser("livreur1", MD5Hash.hash("password3"), "Livreur 1", TypeUtilisateur.LIVREUR);
         Utilisateur manager = addUser("manager1", MD5Hash.hash("password3"), "Manager 1", TypeUtilisateur.MANAGER);
@@ -43,6 +43,7 @@ public class Facade {
         }
 
         Random rand = new Random();
+        Menu m = null;
         for(int i = 1; i < 4; i++) {
             List<Produit> sublist = new ArrayList<>();
             int sz = 1 + rand.nextInt(5);
@@ -51,7 +52,7 @@ public class Facade {
             }
 
             Collection<Menu> menus = r.getMenus();
-            menus.add(addMenu("Menu name " + i, 100 + rand.nextInt(1000), sublist, r));
+            menus.add(m = addMenu("Menu name " + i, 100 + rand.nextInt(1000), sublist, r));
             r.setMenu(menus);
         }
     }
@@ -367,6 +368,42 @@ public class Facade {
         c.setLastTime(LocalDateTime.now());
         ListeAttente l = getListeAttente(c.getRestaurant());
         l.getCommandes().remove(c);
+    }
+
+    //endregion
+
+    //region Livreur operations
+
+    public Collection<Commande> getCommandesEnAttenteLivraison() {
+        return em.createQuery("select c from Commande c where c.etat=:etat", Commande.class)
+                .setParameter("etat", CommandeEtat.EN_ATTENTE_LIVRAISON)
+                .getResultList();
+    }
+
+    public boolean assignCommandeToLivreur(Commande c, Utilisateur u) {
+        c = getCommande(c.getId());
+        u = getUser(u.getId());
+        if (c.getEtat() != CommandeEtat.EN_ATTENTE_LIVRAISON) {
+            return false;
+        }
+
+        c.setEtat(CommandeEtat.EN_LIVRAISON);
+        c.setLastTime(LocalDateTime.now());
+        addLivraison(c, u);
+        return true;
+    }
+
+    public Collection<Livraison> getLivreurLivraisons(Utilisateur u) {
+        u = getUser(u.getId());
+        Hibernate.initialize(u.getLivraisons());
+        return u.getLivraisons();
+    }
+
+    public void setFinishedLivraison(Livraison l) {
+        l = getLivraison(l.getId());
+        l.getCommande().setEtat(CommandeEtat.LIVRE);
+        l.getCommande().setLastTime(LocalDateTime.now());
+        em.remove(l);
     }
 
     //endregion

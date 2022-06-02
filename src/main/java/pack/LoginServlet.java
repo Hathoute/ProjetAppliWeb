@@ -33,10 +33,13 @@ public class LoginServlet extends HttpServlet {
         switch (operation) {
             case "inscription":
                 handleRegister(request, response);
-                break;
+                return;
             case "connexion":
                 handleLogin(request, response);
-                break;
+                return;
+            case "deconnexion":
+                handleLogout(request, response);
+                return;
         }
 
         routingManager.forwardTo404(request, response);
@@ -100,6 +103,20 @@ public class LoginServlet extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/dataServlet?op=listeRestau");
+    }
+
+    private void handleLogout(HttpServletRequest request,
+                             HttpServletResponse response) throws ServletException, IOException {
+
+        Utilisateur user = loginManager.getSessionUser(request.getSession());
+        if(user == null) {
+            routingManager.loadPageFromRoute("/index.html", TypeUtilisateur.NONE, request, response);
+            return;
+        }
+
+        loginManager.logout(request.getSession());
+
+        routingManager.loadPage("/WEB-INF/deconnexion.html", "Deconnexion", request, response);
     }
 
 }

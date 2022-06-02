@@ -52,6 +52,9 @@
         </form>
         <%} else {%>
         <span>Salut, <b><%=user.getFullname()%></b></span>
+        <form action="deconnexion" method="post">
+            <button type="submit">Se déconnecter</button>
+        </form>
         <%}%>
     </div>
 </nav>

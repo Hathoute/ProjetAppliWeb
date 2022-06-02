@@ -21,23 +21,23 @@ public class Utilisateur {
 	
 	private TypeUtilisateur type;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	private Livraison livraison;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "livreur")
+	private Collection<Livraison> livraisons;
 	
 	@OneToMany(mappedBy="proprio")
 	private Collection<Restaurant> restaurants;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	private Panier panier;
-	
-	public Livraison getLivraison() {
-		return livraison;
+
+	public Collection<Livraison> getLivraisons() {
+		return livraisons;
 	}
-	
-	public void setLivraison(Livraison livraison) {
-		this.livraison = livraison;
+
+	public void setLivraisons(Collection<Livraison> livraisons) {
+		this.livraisons = livraisons;
 	}
-	
+
 	public Collection<Restaurant> getRestaurants(){
 		return restaurants;
 	}

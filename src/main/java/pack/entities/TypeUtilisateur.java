@@ -6,7 +6,8 @@ public enum TypeUtilisateur {
 	LIVREUR(1<<2),
 	MANAGER(1<<3),
 	ADMIN(1<<4),
-	ALL(NONE.id | CLIENT.id | LIVREUR.id | MANAGER.id | ADMIN.id);
+	ALL(NONE.id | CLIENT.id | LIVREUR.id | MANAGER.id | ADMIN.id),
+	ONLINE(CLIENT.id | LIVREUR.id | MANAGER.id | ADMIN.id);
 
 	private final int id;
 
