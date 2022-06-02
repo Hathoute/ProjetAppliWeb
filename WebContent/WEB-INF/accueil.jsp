@@ -14,7 +14,7 @@
     <%for (Restaurant r : restaurants) {
         request.setAttribute("comp_Restaurant", r);
     %>
-        <jsp:include page="components/restaurant.jsp"/>
+        <jsp:include page="/WEB-INF/components/restaurant.jsp"/>
     <%}%>
 </div>
 
@@ -23,6 +23,6 @@
     <%for (Menu m : menus) {
         request.setAttribute("comp_Menu", m);
     %>
-    <jsp:include page="components/menu.jsp"/>
+    <jsp:include page="/WEB-INF/components/menu.jsp"/>
     <%}%>
 </div>

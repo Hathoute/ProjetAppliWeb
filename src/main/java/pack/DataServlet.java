@@ -29,7 +29,7 @@ public class DataServlet extends HttpServlet {
                 req.setAttribute("menusJour", facade.getMenus());
                 routingManager.loadPage("/WEB-INF/accueil.jsp", "Accueil", req, resp);
                 break;
-            case "listRestau":
+            case "listeRestau":
                 req.setAttribute("restaurants", facade.getRestaurants());
                 routingManager.loadPage("/WEB-INF/liste_restau.jsp", "Liste des restaurants", req, resp);
                 break;

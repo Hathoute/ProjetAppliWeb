@@ -40,7 +40,7 @@ public class AdminServlet extends HttpServlet {
             case "ajoutRestau":
                 req.setAttribute("types", facade.getRestaurantTypes());
                 req.setAttribute("managers", facade.getUsers(TypeUtilisateur.MANAGER));
-                routingManager.loadPage("/WEB-INF/ajout_restau.jsp", "Ajouter un restaurant", req, resp);
+                routingManager.loadPage("/WEB-INF/gerer_restau.jsp", "Ajouter un restaurant", req, resp);
                 return;
             default:
                 routingManager.forwardTo404(req, resp);
@@ -68,14 +68,14 @@ public class AdminServlet extends HttpServlet {
                 Utilisateur manager = facade.getUser(owner);
                 if(manager == null) {
                     req.setAttribute("message", "Utilisateur introuvable");
-                    routingManager.loadPage("/WEB-INF/ajout_restau.jsp", "Liste des restaurants", req, resp);
+                    routingManager.loadPage("/WEB-INF/gerer_restau.jsp", "Liste des restaurants", req, resp);
                     return;
                 }
 
                 TypeRestaurant type = facade.getRestaurantType(typeId);
                 if(type == null) {
                     req.setAttribute("message", "TypeRestaurant introuvable");
-                    routingManager.loadPage("/WEB-INF/ajout_restau.jsp", "Liste des restaurants", req, resp);
+                    routingManager.loadPage("/WEB-INF/gerer_restau.jsp", "Liste des restaurants", req, resp);
                     return;
                 }
 
@@ -85,7 +85,7 @@ public class AdminServlet extends HttpServlet {
                 break;
             case "ajoutMenu":
                 req.setAttribute("restaurants", facade.getRestaurants());
-                routingManager.loadPage("/WEB-INF/liste_restau.jsp", "Liste des restaurants", req, resp);
+                routingManager.loadPage("/WEB-INF/gerer_restau.jsp", "Liste des restaurants", req, resp);
                 break;
             default:
                 resp.sendError(404);

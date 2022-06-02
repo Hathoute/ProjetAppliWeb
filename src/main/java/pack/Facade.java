@@ -39,7 +39,7 @@ public class Facade {
 
         List<Produit> produits = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
-            produits.add(addProduit("Produit " + i, "Description prod " + i));
+            produits.add(addProduit("Produit " + i, "Description prod " + i, r));
         }
 
         Random rand = new Random();
@@ -114,17 +114,18 @@ public class Facade {
         m.setName(name);
         m.setPrix(prix);
         m.setProduits(produits);
-        m.setRestaurant(resto);
+        m.setRestaurant(getRestaurant(resto.getId()));
 
         em.persist(m);
 
         return m;
     }
 
-    public Produit addProduit(String nom, String desc) {
+    public Produit addProduit(String nom, String desc, Restaurant r) {
         Produit p = new Produit();
         p.setNom(nom);
         p.setDescription(desc);
+        p.setRestaurant(r);
 
         em.persist(p);
 
@@ -222,6 +223,10 @@ public class Facade {
         return em.createQuery("select r from Restaurant r", Restaurant.class).getResultList();
     }
 
+    public Produit getProduit(int id) {
+        return em.find(Produit.class, id);
+    }
+
     //endregion
 
     //region User operations
@@ -294,5 +299,84 @@ public class Facade {
     }
 
     //endregion
+
+    //region Manager operations
+
+    public Collection<Restaurant> getManagedRestaurants(Utilisateur u) {
+        return em.createQuery("select r from Restaurant r where r.proprio=:user", Restaurant.class)
+                .setParameter("user", u)
+                .getResultList();
+    }
+
+    public Restaurant getManagedRestaurant(Utilisateur u, int rid) {
+        Restaurant r = getRestaurant(rid);
+        return r != null && r.getProprio().getId() == u.getId() ? r : null;
+    }
+
+    public Collection<Produit> getRestaurantProduits(Restaurant r) {
+        return em.createQuery("select p from Produit p where p.restaurant=:restau", Produit.class)
+                .setParameter("restau", r)
+                .getResultList();
+    }
+
+    public void removeRestaurant(Utilisateur u, Restaurant r) {
+        if(r.getProprio().getId() != u.getId()) {
+            return;
+        }
+
+        em.remove(getRestaurant(r.getId()));
+    }
+
+    public void addProduitToMenu(Produit p, Menu m) {
+        p = getProduit(p.getId());
+        m = getMenu(m.getId());
+
+        m.getProduits().add(p);
+        m.setProduits(m.getProduits());
+    }
+
+    public Collection<Produit> getMenuProduits(Menu m) {
+        Collection<Produit> produits = getMenu(m.getId()).getProduits();
+        Hibernate.initialize(produits);
+        return produits;
+    }
+
+    public void removeProduit(Produit p) {
+        Produit prod = getProduit(p.getId());
+        prod.getRestaurant().getProduits().remove(prod);
+        prod.getMenus().forEach(x -> x.getProduits().remove(prod));
+        em.remove(prod);
+    }
+
+    public void removeMenu(Menu m) {
+        Menu menu = getMenu(m.getId());
+        menu.getRestaurant().getMenus().remove(menu);
+        em.remove(menu);
+    }
+
+    public ListeAttente getListeAttente(Restaurant r) {
+        r = getRestaurant(r.getId());
+        ListeAttente l = r.getListeAttente();
+        l.getCommandes().forEach(x -> Hibernate.initialize(x.getMenus()));
+        return l;
+    }
+
+    public void validerCommande(Commande c) {
+        c = getCommande(c.getId());
+        c.setEtat(CommandeEtat.EN_ATTENTE_LIVRAISON);
+        c.setLastTime(LocalDateTime.now());
+        ListeAttente l = getListeAttente(c.getRestaurant());
+        l.getCommandes().remove(c);
+    }
+
+    //endregion
+
+    public <T> void merge(T mr) {
+        em.merge(mr);
+    }
+
+    public <T> void remove(T mr) {
+        em.remove(em.merge(mr));
+    }
 
 }

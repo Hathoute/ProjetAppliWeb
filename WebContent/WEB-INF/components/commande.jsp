@@ -1,17 +1,16 @@
-<%@ page import="pack.entities.Restaurant" %>
-<%@ page import="pack.entities.Commande" %>
-<%@ page import="pack.entities.Menu" %>
 <%@ page import="pack.util.Utilities" %>
-<%@ page import="pack.entities.CommandeEtat" %>
+<%@ page import="pack.entities.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
+    TypeUtilisateur tu = (TypeUtilisateur) request.getAttribute("userType");
     Commande c = (Commande) request.getAttribute("comp_Commande");
     CommandeEtat e = c.getEtat();
 %>
 
 <div>
+    <span>Commande #<%=c.getId()%></span>
     <span>Restaurant: <b><%=c.getRestaurant().getNom()%></b></span>
-    <%  int index = 0;
+    <%
         for (Menu m : c.getMenus()) { %>
     <div>
         <span>Menu: <b><%=m.getName()%></b></span> <br/>
@@ -35,7 +34,14 @@
         <input type="hidden" name="commandeId" value="<%=c.getId()%>">
     </form>
     <%} else {%>
-    <span>Depuis le <%=c.getLastTime().toString()%></span>
+    <span>Depuis le <%=c.getLastTime().toString()%></span> <br/>
+    <% if (tu == TypeUtilisateur.MANAGER && e == CommandeEtat.EN_ATTENTE) { %>
+    <form action="managerServlet" method="post">
+        <button type="submit">Valider la commande</button>
+        <input type="hidden" name="op" value="validerCommande">
+        <input type="hidden" name="commandeId" value="<%=c.getId()%>">
+    </form>
+    <%}%>
     <%}%>
     <br/>
 </div>

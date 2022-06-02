@@ -20,13 +20,8 @@ public class Produit {
 	@ManyToMany(mappedBy="produits")
 	private Collection<Menu> menus;
 
-	public Collection<Menu> getMenus(){
-		return menus;
-	}
-	
-	public void SetMenus(Collection<Menu> menus) {
-		this.menus = menus;
-	}
+	@ManyToOne
+	private Restaurant restaurant;
 	
 	public int getId() {
 		return id;
@@ -51,7 +46,20 @@ public class Produit {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
 
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+
+	public Collection<Menu> getMenus() {
+		return menus;
+	}
+
+	public void setMenus(Collection<Menu> menus) {
+		this.menus = menus;
+	}
 }

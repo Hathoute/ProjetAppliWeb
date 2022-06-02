@@ -1,6 +1,7 @@
 package pack.managers;
 
 import pack.entities.TypeUtilisateur;
+import pack.entities.Utilisateur;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -38,17 +39,17 @@ public class RoutingManager {
         routes.put("/inscription",
                 new Route("/WEB-INF/enregistrement.html", "Inscription", null, TypeUtilisateur.NONE.getId()));
         routes.put("/restaurants",
-                new Route("/dataServlet?op=listRestau", "Restaurants", "Restaurants", TypeUtilisateur.ALL.getId()));
+                new Route("/dataServlet?op=listeRestau", "Restaurants", "Restaurants", TypeUtilisateur.ALL.getId()));
+        routes.put("/panier",
+                new Route("/WEB-INF/user/panier.jsp", "Mon panier", "Panier", TypeUtilisateur.CLIENT.getId()));
+        routes.put("/commandesEnAttente",
+                new Route("/WEB-INF/user/commandes_passees.jsp", "Mes commandes", "Mes commandes", TypeUtilisateur.CLIENT.getId()));
         routes.put("/pageAdmin",
                 new Route("/WEB-INF/page_admin.html", "Panel admin", "Panel admin", TypeUtilisateur.ADMIN.getId()));
-        routes.put("/ajoutRestau",
-                new Route("/adminServlet?op=ajoutRestau", "Ajouter un restaurant", "Panel admin", TypeUtilisateur.ADMIN.getId()));
-        routes.put("/ajoutMenu",
-                new Route("/adminServlet?op=ajoutMenu", "Ajouter un menu", "Panel admin", TypeUtilisateur.ADMIN.getId()));
-        routes.put("/panier",
-                new Route("/WEB-INF/panier.jsp", "Mon panier", "Panier", TypeUtilisateur.CLIENT.getId()));
-        routes.put("/commandesEnAttente",
-                new Route("/WEB-INF/commandes_passees.jsp", "Mes commandes", "Mes commandes", TypeUtilisateur.CLIENT.getId()));
+        routes.put("/manageRestaurants",
+                new Route("/managerServlet?op=listeRestau", "Mes restaurants", "Manager", TypeUtilisateur.MANAGER.getId()));
+        routes.put("/manageAjoutRestau",
+                new Route("/managerServlet?op=ajoutRestau", "Ajouter un restaurant", "Manager", TypeUtilisateur.MANAGER.getId()));
 
         // Initialize Navbar
         NavbarManager.initializeTemplate(routes);
@@ -59,7 +60,10 @@ public class RoutingManager {
     }
 
     public void loadPage(String page, String title, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("user", loginManager.getSessionUser(request.getSession()));
+        Utilisateur user = loginManager.getSessionUser(request.getSession());
+        TypeUtilisateur tuser = user == null ? TypeUtilisateur.NONE : user.getType();
+        request.setAttribute("user", user);
+        request.setAttribute("userType", tuser);
 
         if(request.getAttribute("wrapperLoaded") != null) {
             // We already loaded the wrapper, just return content.

@@ -99,7 +99,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        response.sendRedirect(request.getContextPath() + "/dataServlet?op=listRestau");
+        response.sendRedirect(request.getContextPath() + "/dataServlet?op=listeRestau");
     }
 
 }

@@ -17,7 +17,7 @@
             .filter(x -> x.getEtat() == CommandeEtat.EN_ATTENTE)
             .collect(Collectors.toList());
     Collection<Commande> commandesEnLivraison = user.getPanier().getCommandes().stream()
-            .filter(x -> x.getEtat() == CommandeEtat.EN_LIVRAISON)
+            .filter(x -> x.getEtat() == CommandeEtat.EN_ATTENTE_LIVRAISON || x.getEtat() == CommandeEtat.EN_LIVRAISON)
             .collect(Collectors.toList());
     Collection<Commande> commandesRecues = user.getPanier().getCommandes().stream()
             .filter(x -> x.getEtat() == CommandeEtat.LIVRE)
@@ -34,7 +34,7 @@
 <h2>Commandes en attente:</h2>
 <% for(Commande c : commandesEnAttente) { %>
 <% request.setAttribute("comp_Commande", c); %>
-<jsp:include page="components/commande_user.jsp"/>
+<jsp:include page="/WEB-INF/components/commande.jsp"/>
 <%}%>
 <%}%>
 
@@ -43,7 +43,7 @@
 <h2>Commandes en cours de livraison:</h2>
 <% for(Commande c : commandesEnLivraison) { %>
 <% request.setAttribute("comp_Commande", c); %>
-<jsp:include page="components/commande_user.jsp"/>
+<jsp:include page="/WEB-INF/components/commande.jsp"/>
 <%}%>
 <%}%>
 
@@ -52,6 +52,6 @@
 <h2>Commandes livrées:</h2>
 <% for(Commande c : commandesRecues) { %>
 <% request.setAttribute("comp_Commande", c); %>
-<jsp:include page="components/commande_user.jsp"/>
+<jsp:include page="/WEB-INF/components/commande.jsp"/>
 <%}%>
 <%}}%>

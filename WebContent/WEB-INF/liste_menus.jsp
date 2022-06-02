@@ -8,5 +8,5 @@
 <%for (Menu m : r.getMenus()) {
     request.setAttribute("comp_Menu", m);
 %>
-    <jsp:include page="components/menu.jsp"/>
+    <jsp:include page="/WEB-INF/components/menu.jsp"/>
 <%}%>

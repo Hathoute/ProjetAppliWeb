@@ -8,5 +8,5 @@
 <%for (Restaurant r : restaurants) {
     request.setAttribute("comp_Restaurant", r);
 %>
-    <jsp:include page="components/restaurant.jsp"/>
+    <jsp:include page="/WEB-INF/components/restaurant.jsp"/>
 <%}%>

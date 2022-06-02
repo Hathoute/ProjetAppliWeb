@@ -17,7 +17,7 @@
 <h2>Votre Panier:</h2>
 <% for(Commande c : user.getPanier().getCommandesByEtat(CommandeEtat.NONE)) { %>
     <% request.setAttribute("comp_Commande", c); %>
-    <jsp:include page="components/commande_user.jsp"/>
+    <jsp:include page="/WEB-INF/components/commande.jsp"/>
 <%}%>
 <span>Total des commandes: <%=Utilities.formatPrice(user.getPanier().getTotalPrice())%></span><br/>
 <form method="post" action="userServlet">
